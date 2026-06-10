@@ -1,0 +1,234 @@
+metadata:
+  title: Minor Travel Consent
+  short title: Travel Consent
+  description: |
+    Generates a California consent form for minor children to travel with
+    one parent, signed by the non-traveling parent, with a notary
+    acknowledgment block (Civil Code § 1189).
+  authors:
+    - organization: docassemble-msa
+  revision_date: 2026-06-10
+---
+features:
+  navigation: True
+  progress bar: True
+---
+sections:
+  - Introduction
+  - Consenting parent
+  - Children
+  - Traveling parent
+  - Travel details
+  - Signature
+  - Download
+---
+objects:
+  - children: DAList.using(object_type=DAObject, complete_attribute='complete', ask_number=True)
+---
+mandatory: True
+code: |
+  intro_seen
+  nav.set_section('Consenting parent')
+  consenting_parent_name
+  nav.set_section('Children')
+  children.gather()
+  nav.set_section('Traveling parent')
+  traveling_parent_name
+  nav.set_section('Travel details')
+  destinations
+  nav.set_section('Signature')
+  signature_city
+  nav.set_section('Download')
+  final_screen
+---
+section: Introduction
+question: |
+  Consent for Minor Child(ren) to Travel
+subquestion: |
+  This interview prepares a **travel consent letter** signed by the
+  parent who is staying home, allowing the other parent (or legal
+  guardian) to travel with the children.
+
+  The finished document includes:
+
+  * Identification of both parents and each child (with passport
+    details for international trips)
+  * The travel itinerary and dates the consent is valid
+  * Authorization for emergency medical care during the trip
+  * A California notary acknowledgment block (Civil Code § 1189)
+
+  You will need each child's date of birth (and passport, if traveling
+  internationally), the travel dates, and the destination details.
+
+  **Notarization is strongly recommended for international travel** and
+  may be required by airlines or foreign authorities. This interview
+  does not provide legal advice.
+continue button field: intro_seen
+---
+section: Consenting parent
+question: |
+  About you — the parent giving consent
+subquestion: |
+  This is the parent or guardian who is **staying home** and signing
+  the consent.
+fields:
+  - Full legal name: consenting_parent_name
+  - Relationship to the child(ren): consenting_parent_relationship
+    input type: radio
+    choices:
+      - mother
+      - father
+      - legal guardian
+  - Street address: consenting_parent_street
+  - City: consenting_parent_city
+  - State: consenting_parent_state
+    default: CA
+    code: states_list()
+  - Zip code: consenting_parent_zip
+  - Telephone number: consenting_parent_phone
+    help: |
+      This number is also listed as your contact number during the
+      travel period.
+  - Email address: consenting_parent_email
+    datatype: email
+---
+section: Children
+question: |
+  How many minor children are traveling?
+fields:
+  - Number of children: children.target_number
+    datatype: integer
+    min: 1
+    max: 8
+    default: 1
+---
+section: Children
+question: |
+  Tell us about the ${ ordinal(i) } child
+fields:
+  - Full legal name: children[i].name
+  - Date of birth: children[i].dob_raw
+    datatype: date
+  - Place of birth: children[i].birthplace
+    hint: City, State or Country
+  - Passport (number, country of issuance, expiration): children[i].passport_raw
+    required: False
+    hint: e.g., 512345678, USA, exp. 03/2031
+    help: |
+      Leave blank if the child has no passport or the trip is domestic.
+---
+code: |
+  children[i].name
+  children[i].dob_text = format_date(children[i].dob_raw, format='MMMM d, yyyy')
+  children[i].passport_text = children[i].passport_raw.strip() if children[i].passport_raw.strip() else "N/A"
+  children[i].birthplace
+  children[i].complete = True
+---
+section: Traveling parent
+question: |
+  About the traveling parent
+subquestion: |
+  This is the parent or guardian the child(ren) will be **traveling
+  with**.
+fields:
+  - Full legal name: traveling_parent_name
+  - Relationship to the child(ren): traveling_parent_relationship
+    input type: radio
+    choices:
+      - mother
+      - father
+      - legal guardian
+  - Street address: traveling_parent_street
+  - City: traveling_parent_city
+  - State: traveling_parent_state
+    default: CA
+    code: states_list()
+  - Zip code: traveling_parent_zip
+  - Telephone number: traveling_parent_phone
+  - Passport or ID number: traveling_parent_passport_raw
+    required: False
+    help: |
+      Leave blank if not applicable.
+---
+section: Travel details
+question: |
+  Travel details
+fields:
+  - Destination(s): destinations
+    hint: e.g., Guadalajara, Mexico
+  - Departure date: departure_date_raw
+    datatype: date
+  - Return date: return_date_raw
+    datatype: date
+  - Mode of travel: travel_mode
+    hint: e.g., Aeromexico flights AM645 / AM644, or personal vehicle
+  - Accommodations / address while traveling: accommodations
+    hint: Hotel or address, and a phone number if available
+  - Purpose of travel: travel_purpose
+    hint: e.g., vacation, family visit
+  - note: |
+      ---
+  - Is there an existing custody, visitation, or parentage order for the child(ren)?: custody_order_exists
+    datatype: yesnoradio
+  - Case name: custody_case_name
+    hint: e.g., Smith v. Smith
+    show if: custody_order_exists
+  - Case number: custody_case_number
+    show if: custody_order_exists
+  - County and state of the court: custody_case_county
+    hint: e.g., Los Angeles County, California
+    show if: custody_order_exists
+validation code: |
+  if return_date_raw < departure_date_raw:
+    validation_error("The return date cannot be before the departure date.", field="return_date_raw")
+---
+section: Signature
+question: |
+  Signing the consent
+subquestion: |
+  The consent is signed under penalty of perjury under California law.
+  Sign in front of a notary if the consent will be notarized.
+fields:
+  - Date the consent will be signed: signature_date_raw
+    datatype: date
+    default: ${ today() }
+  - City where it will be signed: signature_city
+    hint: e.g., Inglewood
+---
+code: |
+  consenting_parent_address = consenting_parent_street + ", " + consenting_parent_city + ", " + consenting_parent_state + " " + consenting_parent_zip
+---
+code: |
+  traveling_parent_address = traveling_parent_street + ", " + traveling_parent_city + ", " + traveling_parent_state + " " + traveling_parent_zip
+---
+code: |
+  traveling_parent_passport = traveling_parent_passport_raw.strip() if traveling_parent_passport_raw.strip() else "N/A"
+---
+code: |
+  departure_date = format_date(departure_date_raw, format='MMMM d, yyyy')
+  return_date = format_date(return_date_raw, format='MMMM d, yyyy')
+---
+code: |
+  signature_date = format_date(signature_date_raw, format='MMMM d, yyyy')
+---
+event: final_screen
+section: Download
+question: |
+  Your travel consent letter is ready.
+subquestion: |
+  Review the document carefully. The consenting parent must sign it —
+  ideally in front of a notary, especially for international travel.
+  Carry the signed original (and copies of any custody orders and the
+  children's birth certificates) during the trip.
+
+  Use the **Back** button or the navigation menu to make corrections.
+attachment:
+  name: Minor Travel Consent
+  filename: Minor_Travel_Consent
+  description: |
+    Consent for ${ comma_and_list([c.name for c in children]) } to travel
+    with ${ traveling_parent_name }, signed by ${ consenting_parent_name }
+  docx template file: Minor_Travel_Consent.docx
+  valid formats:
+    - pdf
+    - docx

@@ -1,33 +1,35 @@
 # docassemble-msa
 
-MSA w/o Children — a [docassemble](https://docassemble.org) extension package
-that generates a **California Marital Settlement Agreement** (MSA) for a
-dissolution of marriage **without minor children**.
+A [docassemble](https://docassemble.org) extension package that generates a
+California **Consent for Minor Child(ren) to Travel** — the letter the
+non-traveling parent signs so the other parent (or legal guardian) can
+travel with the children.
 
 ## What it does
 
 The guided interview collects, in a handful of grouped screens:
 
-1. **Parties** — the spouses' names, which spouse is the Petitioner, and the
-   Petitioner's contact information (for the In Pro Per heading)
-2. **Case information** — county, case number, dates of marriage, separation,
-   and the agreement
-3. **Property** — each spouse's separate property and any community property
-   being transferred (blank entries render as "No Property")
-4. **Debts** — debts each spouse will assume (blank entries render as "Each
-   party will be responsible for their own debt.")
-5. **Spousal support** — a mutual waiver, or monthly payment terms (payor,
-   amount, start date, and termination conditions)
+1. **Consenting parent** — name, relationship, address, phone, and email of
+   the parent staying home
+2. **Children** — any number of children, each with name, date of birth,
+   place of birth, and optional passport details
+3. **Traveling parent** — name, relationship, address, phone, and optional
+   passport/ID number
+4. **Travel details** — destination(s), departure and return dates, mode of
+   travel, accommodations, purpose, and identification of any existing
+   custody order
+5. **Signature** — date and city of execution
 
-It then assembles a pleading-formatted MSA as PDF or DOCX, including the
-court caption, recitals, warranties, boilerplate clauses, signature blocks,
-and the judge's order line.
+It then assembles the consent letter as PDF or DOCX, including the
+day-to-day decision and emergency medical authorizations, the penalty of
+perjury declaration, and a California notary acknowledgment block
+(Civil Code § 1189).
 
 ## Files
 
-- `docassemble/msa/data/questions/msa.yml` — the interview
-- `docassemble/msa/data/templates/Marital_Settlement_Agreement.docx` — the
-  Jinja2 DOCX template
+- `docassemble/msa/data/questions/minor_travel_consent.yml` — the interview
+- `docassemble/msa/data/templates/Minor_Travel_Consent.docx` — the Jinja2
+  DOCX template
 
 ## Installation
 
@@ -37,10 +39,11 @@ repository's URL, or test it via the Playground.
 Run the interview at:
 
 ```
-/interview?i=docassemble.msa:data/questions/msa.yml
+/interview?i=docassemble.msa:data/questions/minor_travel_consent.yml
 ```
 
 ## Disclaimer
 
-This package does not provide legal advice. Have an attorney review any
-generated agreement before signing or filing it.
+This package does not provide legal advice. Notarization is strongly
+recommended for international travel and may be required by airlines or
+foreign authorities.

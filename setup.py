@@ -46,8 +46,8 @@ def find_package_data(where='.', package='', exclude=standard_exclude, exclude_d
 setup(
     name='docassemble.msa',
     version='1.0.0',
-    description='A docassemble extension that generates a California Marital Settlement Agreement (without minor children)',
-    long_description='# docassemble.msa\n\nA docassemble extension that generates a California Marital Settlement Agreement (without minor children).',
+    description='A docassemble extension that generates a California consent form for minor children to travel with one parent',
+    long_description='# docassemble.msa\n\nA docassemble extension that generates a California consent form for minor children to travel with one parent, signed by the non-traveling parent.',
     long_description_content_type='text/markdown',
     author='tlocph',
     author_email='tavicph+claude@gmail.com',
